@@ -2,6 +2,7 @@ import csv
 import googlemaps
 import datetime
 import math
+import time
 
 mode="transit"
 
@@ -54,11 +55,20 @@ addresses.append(homeAddress)
 #assume all journeys take place at midday tomorrow, to simplify things. This is a way the app could be improved.
 MIDDAY_TOMORROW=datetime.datetime(datetime.datetime.now().year, datetime.datetime.now().month, datetime.datetime.now().day+1, 12)
 
-#make the distance matrix request
-travelTimes=gmaps.distance_matrix(origins=addresses, destinations=addresses, mode=mode, departure_time=MIDDAY_TOMORROW)
+locations.append(home)
+
+#make the distance matrix requests
+#TODO: make less larger requests
+travelTimes={}
+for origin in locations:
+    fromTimes=gmaps.distance_matrix(origins=[origin.address], destinations=addresses, mode=mode, departure_time=MIDDAY_TOMORROW)
+    for destination in locations:
+        travelTimes[(origin, destination)]=fromTimes["rows"][0]["elements"][destination.number]["duration"]["value"]/60
+
+locations.remove(home)
 
 #function for finding the travel time between 2 places
-routeTime=lambda from_, to: travelTimes["rows"][from_.number]["elements"][to.number]["duration"]["value"]/60
+routeTime=lambda from_, to: travelTimes[(from_, to)]
 
 #initialising the result variables
 shortestTime=math.inf
@@ -106,7 +116,9 @@ def tryRoutes(currentTime, currentRoute, currentRemaining):
             tryRoutes(newCurrentTime, newCurrentRoute, newRemaining)
 
 #the routes all start at home, with all the locations remaining
+start=time.clock()
 tryRoutes(0, (home,), tuple(locations))
+finish=time.clock()
 
 print("\nThe final route is:\n")
 
@@ -115,5 +127,7 @@ for loc in shortestRoute: print(loc.name)
 
 #print the final trip time
 print("\nThe travelling will take "+str(shortestTime)+" mins")
+
+print("Execution took {0} seconds".format(finish-start))
 
 input("press enter to exit")
