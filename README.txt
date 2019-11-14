@@ -1,0 +1,6 @@
+- Make sure that you have python installed and properly set up
+- Put your API key into a file called key.txt
+- Put your visit locations into a file called data.csv (see /misc/bigdataset.csv for an example) [NB: for 13+ locations, the processing may take a while]
+- Make sure you've installed the googlemaps module
+- Make sure you've set the transport mode to walking/transit/driving/bicycling
+- You can adjust debug mode (True/False) and threadDepth (choose a number between 0 and 3 depending on how powerful your processor is)
