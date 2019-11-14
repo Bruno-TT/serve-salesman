@@ -1,3 +1,7 @@
+def zeroFloat(n):
+    try:return float(n)
+    except:return.0
+
 #read the data
 f=open("input.tsv","r")
 data=f.read()
@@ -18,11 +22,8 @@ for line in data.split("\n"):
         #for each of the 4 payment columns
         for i in (3,4,5,6):
 
-            #test for presence
-            if line[i]:
-
-                #add to the total if so
-                total+=float(line[i])
+            #add to the total if so
+            total+=zeroFloat(line[i])
 
 #output the total
 print(total)
